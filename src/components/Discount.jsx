@@ -4,15 +4,15 @@ import { ShoppingCart } from "lucide-react";
 
 const Discount = () => {
   return (
-    <div className="flex mt-15 gap-10">
+    <div className="flex flex-col px-3 md:flex-col lg:flex-row mt-15 gap-10">
       <div>
-        <img src={ad} alt="" />
+        <img className="hidden md:hidden lg:flex" src={ad} alt="" />
       </div>
 
       <div>
         <h1 className="font-semibold text-2xl">Discount Products</h1>
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8 my-8 ">
-          <div className="text-center h-[17rem] hover:h-[20rem] transition-all duration-300 p-3 relative overflow-hidden group">
+          <div className="text-center h-[20rem] hover:h-[22rem] transition-all duration-300 p-3 relative overflow-hidden group">
             <img
               src="https://demo.xpeedstudio.com/marketov2/shoe/wp-content/uploads/sites/15/2018/10/4-min-300x300.jpg"
               alt=""
@@ -30,7 +30,7 @@ const Discount = () => {
               <ShoppingCart /> Add To Cart
             </button>
           </div>
-          <div className="text-center h-[17rem] hover:h-[20rem] transition-all duration-300 p-3 relative overflow-hidden group">
+          <div className="text-center h-[20rem] hover:h-[22rem] transition-all duration-300 p-3 relative overflow-hidden group">
             <img
               src="https://demo.xpeedstudio.com/marketov2/shoe/wp-content/uploads/sites/15/2018/10/1-min-300x300.jpg"
               alt=""

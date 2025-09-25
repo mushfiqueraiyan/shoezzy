@@ -2,7 +2,7 @@ import React from "react";
 
 const Hero = () => {
   return (
-    <div className="w-full mt-5 px-3 md:px-3 lg:px-0">
+    <div className="max-w-7xl mx-auto mt-5 px-3 md:px-3 lg:px-0">
       <div className="grid grid-cols-3 gap-3">
         <div className="col-span-2">
           <img
