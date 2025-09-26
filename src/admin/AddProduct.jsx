@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Upload, Plus, Package, DollarSign, Tag, Percent } from "lucide-react";
+import useAxiosSecure from "../hooks/axiosSecure";
+import axios from "axios";
 
 const AdminDashboard = () => {
   const {
@@ -12,7 +14,10 @@ const AdminDashboard = () => {
     formState: { errors },
   } = useForm();
 
+  const axiosSecure = useAxiosSecure();
+
   const [imagePreview, setImagePreview] = useState(null);
+  const [thumbnail, setThumbnail] = useState(null);
 
   const watchedPrice = watch("price");
   const watchedDiscount = watch("discount");
@@ -38,6 +43,7 @@ const AdminDashboard = () => {
     imageField.onChange(e);
 
     const file = e.target.files[0];
+    setThumbnail(file);
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -56,14 +62,36 @@ const AdminDashboard = () => {
     return price - (price * discount) / 100;
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    let thumbnailImage = "";
+
+    if (thumbnail) {
+      const formData = new FormData();
+      formData.append("image", thumbnail);
+
+      const thumb = await axios.post(
+        `https://api.imgbb.com/1/upload?key=898e44b732fe9177555b52db8dc098ff`,
+        formData
+      );
+
+      thumbnailImage = thumb.data.data.url || "";
+    }
+
     const product = {
-      productInfo: data,
-      productImg: data.image[0],
+      name: data.name,
+      description: data.description,
+      category: data.category,
       price: calculateFinalPrice(),
+      discount: data.discount,
+      thumbnail: thumbnailImage,
     };
 
-    console.log(product);
+    const res = await axiosSecure.post("/add-products", product);
+
+    if (res.data.insertedId) {
+      alert("Product Added");
+    }
+    // console.log(product);
   };
 
   return (
@@ -184,6 +212,25 @@ const AdminDashboard = () => {
                   {errors.category && (
                     <p className="mt-1 text-sm text-red-600">
                       {errors.category.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Description
+                  </label>
+                  <textarea
+                    placeholder="Product Description"
+                    className="border border-gray-300 p-3 rounded-xl w-95 md:w-100 lg:w-150"
+                    rows={5}
+                    {...register("description", {
+                      required: "Please add a description",
+                    })}
+                  ></textarea>{" "}
+                  {errors.description && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.description.message}
                     </p>
                   )}
                 </div>
