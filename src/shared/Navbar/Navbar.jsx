@@ -1,8 +1,11 @@
 import { Footprints, Heart, ShoppingCart } from "lucide-react";
 import React from "react";
-import { NavLink } from "react-router";
+import { useSelector } from "react-redux";
+import { Link, NavLink } from "react-router";
 
 const Navbar = () => {
+  const cartItems = useSelector((state) => state.cart.items);
+
   return (
     <div className="flex items-center justify-between border-b pb-4 px-4 md:px-3 lg:px-3 border-gray-300">
       <div>
@@ -54,12 +57,12 @@ const Navbar = () => {
             10
           </span>
         </div>
-        <div className="relative">
+        <Link to={"/cart"} className="relative">
           <ShoppingCart size={30} />
           <span className=" bg-gray-200 text-[#297bff] rounded-full absolute -top-1 left-6 w-6 flex items-center justify-center h-6">
-            2
+            {cartItems.length}
           </span>
-        </div>
+        </Link>
       </div>
     </div>
   );
