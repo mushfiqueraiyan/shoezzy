@@ -1,16 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart } from "../../store/cartSlice";
 
 const Cart = () => {
+  const [qtn, setQtn] = useState(0);
   const cartItems = useSelector((state) => state.cart.items);
 
   const dispatch = useDispatch();
 
   const handleRemove = (id) => {
     dispatch(removeFromCart(id));
-    toast.success("Item removed from cart!");
+    toast.error("Item removed from cart!");
+  };
+
+  const handleIncrease = () => {
+    setQtn(qtn + 1);
+  };
+  const handleDecrease = () => {
+    setQtn(qtn - 1);
   };
 
   const totalPrice = cartItems
@@ -41,7 +49,7 @@ const Cart = () => {
             </thead>
             <tbody>
               {cartItems.map((item) => {
-                const subtotal = item.price.toFixed(2);
+                const subtotal = item.price.toFixed(2) * qtn;
                 return (
                   <tr
                     key={item._id}
@@ -59,7 +67,22 @@ const Cart = () => {
                     <td className="py-3 px-4 text-red-600 font-semibold">
                       ${item.price.toFixed(2)}
                     </td>
-                    <td className="py-3 px-4">1</td>
+                    <td className="py-3 px-4  gap-3">
+                      {" "}
+                      <button
+                        onClick={handleDecrease}
+                        className="p-2 bg-gray-300 mr-4"
+                      >
+                        -
+                      </button>{" "}
+                      {qtn}{" "}
+                      <button
+                        onClick={handleIncrease}
+                        className="p-2 bg-gray-300 ml-4"
+                      >
+                        +
+                      </button>
+                    </td>
                     <td className="py-3 px-4 font-semibold">${subtotal}</td>
                     <td className="py-3 px-4">
                       <button
