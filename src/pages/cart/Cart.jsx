@@ -4,25 +4,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart } from "../../store/cartSlice";
 
 const Cart = () => {
-  const [qtn, setQtn] = useState(0);
   const cartItems = useSelector((state) => state.cart.items);
-
   const dispatch = useDispatch();
+
+  const [quantities, setQuantities] = useState(
+    cartItems.reduce((acc, item) => {
+      acc[item._id] = 1;
+      return acc;
+    }, {})
+  );
 
   const handleRemove = (id) => {
     dispatch(removeFromCart(id));
     toast.error("Item removed from cart!");
   };
 
-  const handleIncrease = () => {
-    setQtn(qtn + 1);
+  const handleIncrease = (id) => {
+    setQuantities((prev) => ({ ...prev, [id]: prev[id] + 1 }));
   };
-  const handleDecrease = () => {
-    setQtn(qtn - 1);
+
+  const handleDecrease = (id) => {
+    setQuantities((prev) => {
+      const newQty = prev[id] - 1;
+      return { ...prev, [id]: newQty < 1 ? 1 : newQty }; // minimum 1
+    });
   };
 
   const totalPrice = cartItems
-    .reduce((total, item) => total + item.price, 0)
+    .reduce(
+      (total, item) => total + item.price * (quantities[item._id] || 1),
+      0
+    )
     .toFixed(2);
 
   if (cartItems.length === 0) {
@@ -31,7 +43,6 @@ const Cart = () => {
 
   return (
     <div>
-      {" "}
       <div className="max-w-7xl mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
 
@@ -49,7 +60,9 @@ const Cart = () => {
             </thead>
             <tbody>
               {cartItems.map((item) => {
-                const subtotal = item.price.toFixed(2) * qtn;
+                const qty = quantities[item._id] || 1;
+                const subtotal = (item.price * qty).toFixed(2);
+
                 return (
                   <tr
                     key={item._id}
@@ -67,18 +80,17 @@ const Cart = () => {
                     <td className="py-3 px-4 text-red-600 font-semibold">
                       ${item.price.toFixed(2)}
                     </td>
-                    <td className="py-3 px-4  gap-3">
-                      {" "}
+                    <td className="py-3 px-4 flex items-center gap-3">
                       <button
-                        onClick={handleDecrease}
-                        className="p-2 bg-gray-300 mr-4"
+                        onClick={() => handleDecrease(item._id)}
+                        className="p-2 bg-gray-300"
                       >
                         -
-                      </button>{" "}
-                      {qtn}{" "}
+                      </button>
+                      {qty}
                       <button
-                        onClick={handleIncrease}
-                        className="p-2 bg-gray-300 ml-4"
+                        onClick={() => handleIncrease(item._id)}
+                        className="p-2 bg-gray-300"
                       >
                         +
                       </button>

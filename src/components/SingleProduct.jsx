@@ -1,6 +1,6 @@
 import { ArrowLeftSquareIcon } from "lucide-react";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLoaderData, useNavigate } from "react-router";
 import { addToCart } from "../store/cartSlice";
 import toast from "react-hot-toast";
@@ -11,11 +11,14 @@ const SingleProduct = () => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.items);
 
   const handleAddToCart = () => {
     dispatch(addToCart(product));
     toast.success("Product added to cart!");
   };
+
+  const isInCart = cartItems.some((item) => item._id === product._id);
 
   return (
     <div>
@@ -53,12 +56,21 @@ const SingleProduct = () => {
           {/* Description */}
           <p className="text-gray-700 leading-relaxed">{product.description}</p>
 
-          <button
-            onClick={handleAddToCart}
-            className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
-          >
-            Add to Cart
-          </button>
+          {isInCart ? (
+            <button
+              onClick={() => toast.error("Already added to the cart")}
+              className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+            >
+              Already added to the cart
+            </button>
+          ) : (
+            <button
+              onClick={handleAddToCart}
+              className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+            >
+              Add to Cart
+            </button>
+          )}
         </div>
       </div>
     </div>
