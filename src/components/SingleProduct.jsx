@@ -25,13 +25,13 @@ const SingleProduct = () => {
       <span onClick={() => navigate("/")} className="cursor-pointer">
         <ArrowLeftSquareIcon color="#1055C9" size={30} className="mt-5" />
       </span>
-      <div className="max-w-6xl mx-auto p-6 flex flex-col md:flex-row gap-8">
+      <div className="max-w-7xl mx-auto p-6 flex flex-col md:flex-row gap-8">
         {/* Product Image */}
-        <div className="flex-1 flex justify-center">
+        <div className="flex-1 flex justify-center ">
           <img
             src={product.thumbnail}
             alt={product.name}
-            className="rounded-lg shadow-lg max-w-full"
+            className="rounded-lg shadow-lg max-w-full object-contain"
           />
         </div>
 

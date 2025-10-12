@@ -28,7 +28,7 @@ const PopularProduct = () => {
                   <img
                     src={p.thumbnail}
                     alt=""
-                    className="w-full h-35 object-contain mb-2"
+                    className="w-full h-42 object-contain mb-2"
                   />
                   <span className="text-gray-500 ">{p.category}</span>
                   <h3 className="text-xl font-semibold ">{p.name}</h3>

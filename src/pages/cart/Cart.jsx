@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart } from "../../store/cartSlice";
+import { useNavigate } from "react-router";
 
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
@@ -40,6 +41,8 @@ const Cart = () => {
   if (cartItems.length === 0) {
     return <h2 className="text-center mt-10 text-2xl">Your cart is empty</h2>;
   }
+
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -111,8 +114,14 @@ const Cart = () => {
           </table>
         </div>
 
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex flex-col justify-end">
           <h2 className="text-2xl font-bold">Total: ${totalPrice}</h2>
+          <button
+            onClick={() => navigate("/checkout", { state: { quantities } })}
+            className="mt-4 bg-blue-600 cursor-pointer text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+          >
+            Checkout
+          </button>
         </div>
       </div>
     </div>
