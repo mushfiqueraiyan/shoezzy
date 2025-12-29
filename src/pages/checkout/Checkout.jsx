@@ -1,16 +1,17 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { clearCart } from "../../store/cartSlice";
 
 const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.items);
   const location = useLocation();
-  const quantities = location.state?.quantities || {};
 
-  // React Hook Form setup
+  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
@@ -19,10 +20,7 @@ const Checkout = () => {
   } = useForm();
 
   const totalPrice = cartItems
-    .reduce(
-      (total, item) => total + item.price * (quantities[item._id] || 1),
-      0
-    )
+    .reduce((total, item) => total + item.price * item.quantity, 0)
     .toFixed(2);
 
   const onSubmit = async (data) => {
@@ -37,7 +35,7 @@ const Checkout = () => {
         id: item._id,
         name: item.name,
         price: item.price,
-        quantity: quantities[item._id] || 1,
+        quantity: item.quantity || 1,
       })),
       total: totalPrice,
       createdAt: new Date(),
@@ -49,6 +47,7 @@ const Checkout = () => {
       if (res.status === 200 || res.status === 201) {
         toast.success("Order placed successfully!");
         reset();
+        dispatch(clearCart());
       } else {
         toast.error("Failed to place order");
       }
@@ -74,8 +73,7 @@ const Checkout = () => {
 
             <div className="space-y-6">
               {cartItems.map((item) => {
-                const qty = quantities[item._id] || 1;
-                const subtotal = (item.price * qty).toFixed(2);
+                const subtotal = (item.price * item.quantity).toFixed(2);
 
                 return (
                   <div
@@ -100,7 +98,8 @@ const Checkout = () => {
                     </div>
                     <div className="text-right">
                       <p className="text-gray-600 text-sm">
-                        Qty: <span className="font-semibold">{qty}</span>
+                        Qty:{" "}
+                        <span className="font-semibold">{item.quantity}</span>
                       </p>
                       <p className="text-lg font-bold text-gray-900 mt-1">
                         ${subtotal}

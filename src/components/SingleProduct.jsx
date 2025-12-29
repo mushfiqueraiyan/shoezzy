@@ -1,11 +1,13 @@
 import { ArrowLeftSquareIcon } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLoaderData, useNavigate } from "react-router";
 import { addToCart } from "../store/cartSlice";
 import toast from "react-hot-toast";
 
 const SingleProduct = () => {
+  const [count, setCount] = useState(1);
+
   const product = useLoaderData();
 
   const navigate = useNavigate();
@@ -14,11 +16,18 @@ const SingleProduct = () => {
   const cartItems = useSelector((state) => state.cart.items);
 
   const handleAddToCart = () => {
-    dispatch(addToCart(product));
+    dispatch(addToCart({ product, quantity: count }));
     toast.success("Product added to cart!");
   };
 
   const isInCart = cartItems.some((item) => item._id === product._id);
+
+  const increase = () => {
+    setCount((prev) => prev + 1);
+  };
+  const decrease = () => {
+    setCount((prev) => (prev > 1 ? prev - 1 : 1));
+  };
 
   return (
     <div>
@@ -51,6 +60,26 @@ const SingleProduct = () => {
                 {product.discount}% discount
               </span>
             )}
+          </div>
+
+          <div className="flex items-center gap-2 my-5">
+            <button
+              onClick={decrease}
+              className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-md text-xl font-semibold hover:bg-gray-100"
+            >
+              −
+            </button>
+
+            <span className="w-8 text-center font-semibold text-lg">
+              {count}
+            </span>
+
+            <button
+              onClick={increase}
+              className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-md text-xl font-semibold hover:bg-gray-100"
+            >
+              +
+            </button>
           </div>
 
           {/* Description */}

@@ -1,24 +1,39 @@
 import { createSlice } from "@reduxjs/toolkit";
-import toast from "react-hot-toast";
 
 const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
 
-const initialState = {
-  items: savedCart,
-};
-
 const cartSlice = createSlice({
   name: "cart",
-  initialState,
+  initialState: {
+    items: savedCart,
+  },
   reducers: {
     addToCart: (state, action) => {
-      const item = action.payload;
-      const existing = state.items.find((i) => i._id === item._id);
+      const { product, quantity } = action.payload;
+
+      const existing = state.items.find((item) => item._id === product._id);
+
       if (existing) {
-        toast.error("Already added to the cart"); // increase quantity if already exists
+        existing.quantity += quantity;
       } else {
-        state.items.push(item);
+        state.items.push({
+          ...product,
+          quantity,
+        });
       }
+
+      localStorage.setItem("cart", JSON.stringify(state.items));
+    },
+
+    increaseQty: (state, action) => {
+      const item = state.items.find((i) => i._id === action.payload);
+      if (item) item.quantity += 1;
+      localStorage.setItem("cart", JSON.stringify(state.items));
+    },
+
+    decreaseQty: (state, action) => {
+      const item = state.items.find((i) => i._id === action.payload);
+      if (item && item.quantity > 1) item.quantity -= 1;
       localStorage.setItem("cart", JSON.stringify(state.items));
     },
 
@@ -26,8 +41,20 @@ const cartSlice = createSlice({
       state.items = state.items.filter((item) => item._id !== action.payload);
       localStorage.setItem("cart", JSON.stringify(state.items));
     },
+
+    clearCart: (state) => {
+      state.items = [];
+      localStorage.setItem("cart", JSON.stringify([]));
+    },
   },
 });
 
-export const { addToCart, removeFromCart } = cartSlice.actions;
+export const {
+  addToCart,
+  increaseQty,
+  decreaseQty,
+  removeFromCart,
+  clearCart,
+} = cartSlice.actions;
+
 export default cartSlice.reducer;
